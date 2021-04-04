@@ -1,0 +1,21 @@
+#@retail@
+## Interface: 90005
+#@end-retail@
+#@non-retail@
+# ## Interface: 11306
+#@end-non-retail@
+## Title: CVarsBackup
+## Notes: A small addon to backup and restore CVars settings.
+## Author: Xruptor
+## Version: 1.0
+## X-Curse-Project-ID: 465669
+## X-WoWI-ID: 25942
+## OptionalDeps: tekDebug
+## SavedVariables: CVarsBkp_DB
+
+libs\LibStub\LibStub.lua
+libs\AceLocale-3.0\AceLocale-3.0.xml
+
+locale\enUS.lua
+
+CVarsBackup.lua
