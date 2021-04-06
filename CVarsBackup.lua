@@ -98,6 +98,32 @@ local function RestoreCVars()
 	DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: %s", ADDON_NAME, L.RestoreComplete))
 end
 
+local function CheckDiffs()
+	if not CVarsBkp_DB or GetHashTableLen(CVarsBkp_DB) <= 0 then
+		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: %s", ADDON_NAME, L.Invalid))
+		return
+	end
+	
+	for _, info in pairs(C_Console.GetAllCommands()) do
+		if info.commandType == 0 --Use CVar not scripts
+			and info.category ~= 0 --Ignore Debug Category from Enum.ConsoleCategory
+			and not strfind(info.command:lower(), 'debug') -- Ignore commands with "debug" in their names
+			and info.category ~= 8 --Ignore GM Category from Enum.ConsoleCategory
+		then
+			local value = GetCVar(info.command)
+			if CVarsBkp_DB[info.command] ~= nil then
+				if CVarsBkp_DB[info.command] ~= value then
+					DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: |cFF20ff20DB:|r %s  |  |cFF20ff20Curr:|r %s", info.command, tostring(info.command),  tostring(value)))
+				end
+			else
+				if value ~= nil then
+					DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: |cFFFF6347DB:|r %s  |  |cFFFF6347Curr:|r %s", info.command, "NIL",  tostring(value)))
+				end
+			end
+		end
+	end
+end
+
 local function IsInBG()
 	if (GetNumBattlefieldScores() > 0) then
 		return true
@@ -131,6 +157,31 @@ function addon:EnableAddon()
 	local ver = GetAddOnMetadata(ADDON_NAME,"Version") or '1.0'
 	DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r [v|cFF20ff20%s|r] loaded", ADDON_NAME, ver or "1.0"))
 end
+
+StaticPopupDialogs["CVARSBACKUP_SAVE"] = {
+	text = L.SaveCVars,
+	button1 = YES,
+	button2 = NO,
+	OnAccept = function()
+		CVarsBkp_DB = GetCVars()
+		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: %s", ADDON_NAME, L.SaveComplete))
+	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+}
+
+StaticPopupDialogs["CVARSBACKUP_RESTORE"] = {
+	text = L.RestoreCVars,
+	button1 = YES,
+	button2 = NO,
+	OnAccept = function()
+		RestoreCVars()
+	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+}
 
 function addon:CreateUtilityFrame()
 
@@ -172,8 +223,7 @@ function addon:CreateUtilityFrame()
 		end
 	end)
 	saveButton:SetScript("OnClick", function()
-		CVarsBkp_DB = GetCVars()
-		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: %s", ADDON_NAME, L.SaveComplete))
+		StaticPopup_Show("CVARSBACKUP_SAVE")
 	end)
 
 	local restoreButton = CreateFrame("Button", ADDON_NAME.."_restore_button", self, "UIPanelButtonTemplate")
@@ -190,7 +240,7 @@ function addon:CreateUtilityFrame()
 		end
 	end)
 	restoreButton:SetScript("OnClick", function()
-		RestoreCVars()
+		StaticPopup_Show("CVARSBACKUP_RESTORE")
 	end)
 	
 	local reloadUIButton = CreateFrame("Button", ADDON_NAME.."_reloadui_button", self, "UIPanelButtonTemplate")
@@ -213,6 +263,23 @@ function addon:CreateUtilityFrame()
 		Sound_GameSystem_RestartSoundSystem()
 		--you need to reload the UI
 		ReloadUI()
+	end)
+	
+	local diffButton = CreateFrame("Button", ADDON_NAME.."_reloadui_button", self, "UIPanelButtonTemplate")
+	diffButton:SetText("!=")
+	diffButton:SetHeight(30)
+	diffButton:SetWidth(diffButton:GetTextWidth() + 12)
+	diffButton:SetPoint("CENTER", self, "BOTTOM", 82, 20)
+	diffButton:SetScript("OnUpdate", function()
+		--only allow this button to be clicked if we are not in combat
+		if not CheckCombatStatus() then
+			diffButton:SetEnabled(true)
+		else
+			diffButton:SetEnabled(false)
+		end
+	end)
+	diffButton:SetScript("OnClick", function()
+		CheckDiffs()
 	end)
 	
 	self:Show()
