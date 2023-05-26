@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"Lua.diagnostics.globals": [
+			"StaticPopupDialogs",
+			"YES",
+			"NO",
+			"DEFAULT_CHAT_FRAME",
+			"StaticPopup_Show",
+			"ReloadUI",
+			"tostringall"
+		]
+	}
+}

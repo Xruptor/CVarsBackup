@@ -209,6 +209,9 @@ function addon:CreateUtilityFrame()
 	g:SetPoint("TOP",0,-5)
 	g:SetText("CVarsBackup by Xruptor")
 
+	local closeBtn = CreateFrame("Button", nil, self, "UIPanelCloseButton")
+	closeBtn:SetPoint("TOPRIGHT", C_EditMode and -3 or 2, C_EditMode and -3 or 1) --check for classic servers to adjust for positioning using a check for the new EditMode
+
 	local saveButton = CreateFrame("Button", ADDON_NAME.."_save_button", self, "UIPanelButtonTemplate")
 	saveButton:SetText(L.SaveCVars)
 	saveButton:SetHeight(30)
