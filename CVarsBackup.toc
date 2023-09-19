@@ -19,5 +19,6 @@ libs\AceLocale-3.0\AceLocale-3.0.xml
 locale\enUS.lua
 locale\ruRU.lua
 locale\zhCN.lua
+locale\zhTW.lua
 
 CVarsBackup.lua
