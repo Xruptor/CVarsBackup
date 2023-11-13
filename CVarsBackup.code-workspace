@@ -12,7 +12,29 @@
 			"DEFAULT_CHAT_FRAME",
 			"StaticPopup_Show",
 			"ReloadUI",
-			"tostringall"
+			"tostringall",
+			"UIParent",
+			"_G",
+			"WOW_PROJECT_ID",
+			"WOW_PROJECT_MAINLINE",
+			"SetCVar",
+			"CreateFrame",
+			"pairs",
+			"IsActiveBattlefieldArena",
+			"string",
+			"UnitAffectingCombat",
+			"C_EditMode",
+			"RestartGx",
+			"Sound_GameSystem_RestartSoundSystem",
+			"BackdropTemplateMixin",
+			"GetNumBattlefieldScores",
+			"InCombatLockdown",
+			"IsLoggedIn",
+			"C_Console",
+			"GetCVar",
+			"C_PetBattles",
+			"strfind",
+			"tostring"
 		]
 	}
 }
