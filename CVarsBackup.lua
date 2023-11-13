@@ -59,7 +59,7 @@ end
 
 local function GetCVars()
 	local t = {}
-	for _, info in pairs(C_Console.GetAllCommands()) do
+	for _, info in pairs(ConsoleGetAllCommands()) do
 		if info.commandType == 0 --Use CVar not scripts
 			and info.category ~= 0 --Ignore Debug Category from Enum.ConsoleCategory
 			and not strfind(info.command:lower(), 'debug') -- Ignore commands with "debug" in their names
@@ -83,7 +83,7 @@ local function RestoreCVars()
 		SetCVar(k, value)
 	end
 	
-	for _, info in pairs(C_Console.GetAllCommands()) do
+	for _, info in pairs(ConsoleGetAllCommands()) do
 		if info.commandType == 0 --Use CVar not scripts
 			and info.category ~= 0 --Ignore Debug Category from Enum.ConsoleCategory
 			and not strfind(info.command:lower(), 'debug') -- Ignore commands with "debug" in their names
@@ -104,7 +104,7 @@ local function CheckDiffs()
 		return
 	end
 	
-	for _, info in pairs(C_Console.GetAllCommands()) do
+	for _, info in pairs(ConsoleGetAllCommands()) do
 		if info.commandType == 0 --Use CVar not scripts
 			and info.category ~= 0 --Ignore Debug Category from Enum.ConsoleCategory
 			and not strfind(info.command:lower(), 'debug') -- Ignore commands with "debug" in their names
