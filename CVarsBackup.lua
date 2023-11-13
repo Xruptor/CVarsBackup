@@ -58,8 +58,15 @@ local function GetHashTableLen(tbl)
 end
 
 local function GetCVars()
+
+	local xGetAllCommands = (C_Console and C_Console.GetAllCommands) or ConsoleGetAllCommands
+	if not xGetAllCommands then
+		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: %s", ADDON_NAME, L.NoCmds))
+		return
+	end
 	local t = {}
-	for _, info in pairs(ConsoleGetAllCommands()) do
+
+	for _, info in pairs(xGetAllCommands()) do
 		if info.commandType == 0 --Use CVar not scripts
 			and info.category ~= 0 --Ignore Debug Category from Enum.ConsoleCategory
 			and not strfind(info.command:lower(), 'debug') -- Ignore commands with "debug" in their names
@@ -77,13 +84,19 @@ local function RestoreCVars()
 		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: %s", ADDON_NAME, L.Invalid))
 		return
 	end
-	
+
+	local xGetAllCommands = (C_Console and C_Console.GetAllCommands) or ConsoleGetAllCommands
+	if not xGetAllCommands then
+		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: %s", ADDON_NAME, L.NoCmds))
+		return
+	end
+
 	--first lets restore our stored values
 	for k, value in pairs(CVarsBkp_DB) do
 		SetCVar(k, value)
 	end
-	
-	for _, info in pairs(ConsoleGetAllCommands()) do
+
+	for _, info in pairs(xGetAllCommands()) do
 		if info.commandType == 0 --Use CVar not scripts
 			and info.category ~= 0 --Ignore Debug Category from Enum.ConsoleCategory
 			and not strfind(info.command:lower(), 'debug') -- Ignore commands with "debug" in their names
@@ -94,7 +107,7 @@ local function RestoreCVars()
 			SetCVar(info.command, nil)
 		end
 	end
-	
+
 	DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: %s", ADDON_NAME, L.RestoreComplete))
 end
 
@@ -103,8 +116,14 @@ local function CheckDiffs()
 		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: %s", ADDON_NAME, L.Invalid))
 		return
 	end
-	
-	for _, info in pairs(ConsoleGetAllCommands()) do
+
+	local xGetAllCommands = (C_Console and C_Console.GetAllCommands) or ConsoleGetAllCommands
+	if not xGetAllCommands then
+		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: %s", ADDON_NAME, L.NoCmds))
+		return
+	end
+
+	for _, info in pairs(xGetAllCommands()) do
 		if info.commandType == 0 --Use CVar not scripts
 			and info.category ~= 0 --Ignore Debug Category from Enum.ConsoleCategory
 			and not strfind(info.command:lower(), 'debug') -- Ignore commands with "debug" in their names
@@ -190,11 +209,11 @@ function addon:CreateUtilityFrame()
 	self:SetMovable(false)
 	self:SetClampedToScreen(true)
 	self:EnableMouse(true)
-	
+
 	--self:SetScale(XanDUR_DB.scale)
-	
+
 	self:SetPoint("CENTER", UIParent, "CENTER")
-	
+
 	self:SetBackdrop( {
 		bgFile = "Interface\\TutorialFrame\\TutorialFrameBackground";
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border";
@@ -203,7 +222,7 @@ function addon:CreateUtilityFrame()
 	} );
 	self:SetBackdropBorderColor(0.5, 0.5, 0.5);
 	self:SetBackdropColor(0.5, 0.5, 0.5, 0.6)
-	
+
 	local g = self:CreateFontString("$parentText", "ARTWORK", "GameFontNormalSmall")
 	g:SetJustifyH("LEFT")
 	g:SetPoint("TOP",0,-5)
@@ -245,7 +264,7 @@ function addon:CreateUtilityFrame()
 	restoreButton:SetScript("OnClick", function()
 		StaticPopup_Show("CVARSBACKUP_RESTORE")
 	end)
-	
+
 	local reloadUIButton = CreateFrame("Button", ADDON_NAME.."_reloadui_button", self, "UIPanelButtonTemplate")
 	reloadUIButton:SetText(L.ReloadUI)
 	reloadUIButton:SetHeight(30)
@@ -267,7 +286,7 @@ function addon:CreateUtilityFrame()
 		--you need to reload the UI
 		ReloadUI()
 	end)
-	
+
 	local diffButton = CreateFrame("Button", ADDON_NAME.."_reloadui_button", self, "UIPanelButtonTemplate")
 	diffButton:SetText("!=")
 	diffButton:SetHeight(30)
@@ -284,7 +303,7 @@ function addon:CreateUtilityFrame()
 	diffButton:SetScript("OnClick", function()
 		CheckDiffs()
 	end)
-	
+
 	self:Show()
 end
 
