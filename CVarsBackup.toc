@@ -6,7 +6,7 @@
 ## Title: CVarsBackup
 ## Notes: A small addon to backup and restore CVars settings.
 ## Author: Xruptor
-## Version: 2.5
+## Version: 2.6
 ## IconTexture: 4548890
 ## X-Curse-Project-ID: 465669
 ## X-WoWI-ID: 25942
