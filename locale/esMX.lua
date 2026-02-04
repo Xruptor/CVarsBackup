@@ -1,6 +1,6 @@
 local ADDON_NAME, addon = ...
 
-local L = addon:NewLocale("enUS", true)
+local L = addon:NewLocale("esMX")
 if not L then return end
 
 L.SaveCVars = "Save CVars"

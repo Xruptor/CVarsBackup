@@ -1,10 +1,13 @@
-local ADDON_NAME, addon = ...
+local ADDON_NAME, private = ...
 if not _G[ADDON_NAME] then
 	_G[ADDON_NAME] = CreateFrame("Frame", ADDON_NAME, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 end
-addon = _G[ADDON_NAME]
+local addon = _G[ADDON_NAME]
 
-local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
+-- Locale files load with the addon's private table (2nd return from "...").
+addon.private = private
+addon.L = (private and private.L) or addon.L or {}
+local L = addon.L
 
 local debugf = tekDebug and tekDebug:GetFrame(ADDON_NAME)
 local function Debug(...)
@@ -132,11 +135,11 @@ local function CheckDiffs()
 			local value = GetCVar(info.command)
 			if CVarsBkp_DB[info.command] ~= nil then
 				if CVarsBkp_DB[info.command] ~= value then
-					DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: |cFF20ff20DB:|r %s  |  |cFF20ff20Curr:|r %s", info.command, tostring(info.command),  tostring(value)))
+	DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: |cFF20ff20%s:|r %s  |  |cFF20ff20%s:|r %s", info.command, L.DBLabel, tostring(info.command), L.CurrLabel,  tostring(value)))
 				end
 			else
 				if value ~= nil then
-					DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: |cFFFF6347DB:|r %s  |  |cFFFF6347Curr:|r %s", info.command, "NIL",  tostring(value)))
+					DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r: |cFFFF6347%s:|r %s  |  |cFFFF6347%s:|r %s", info.command, L.DBLabel, L.NilLabel, L.CurrLabel,  tostring(value)))
 				end
 			end
 		end
@@ -174,7 +177,13 @@ function addon:EnableAddon()
 	self:CreateUtilityFrame()
 
 	local ver = C_AddOns.GetAddOnMetadata(ADDON_NAME,"Version") or '1.0'
-	DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r [v|cFF20ff20%s|r] loaded", ADDON_NAME, ver or "1.0"))
+	DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r [v|cFF20ff20%s|r] %s", ADDON_NAME, ver or "1.0", L.Loaded))
+end
+
+SLASH_CVARSBACKUP1 = "/cvarsbackup"
+SLASH_CVARSBACKUP2 = "/cvb"
+SlashCmdList["CVARSBACKUP"] = function()
+	addon:CreateUtilityFrame()
 end
 
 StaticPopupDialogs["CVARSBACKUP_SAVE"] = {
@@ -204,6 +213,12 @@ StaticPopupDialogs["CVARSBACKUP_RESTORE"] = {
 
 function addon:CreateUtilityFrame()
 
+	if self._uiCreated then
+		self:Show()
+		return
+	end
+	self._uiCreated = true
+
 	self:SetWidth(200)
 	self:SetHeight(140)
 	self:SetMovable(false)
@@ -226,7 +241,7 @@ function addon:CreateUtilityFrame()
 	local g = self:CreateFontString("$parentText", "ARTWORK", "GameFontNormalSmall")
 	g:SetJustifyH("LEFT")
 	g:SetPoint("TOP",0,-5)
-	g:SetText("CVarsBackup by Xruptor")
+	g:SetText(L.MainTitle)
 
 	local closeBtn = CreateFrame("Button", nil, self, "UIPanelCloseButton")
 	closeBtn:SetPoint("TOPRIGHT", C_EditMode and -3 or 2, C_EditMode and -3 or 1) --check for classic servers to adjust for positioning using a check for the new EditMode
@@ -306,4 +321,3 @@ function addon:CreateUtilityFrame()
 
 	self:Show()
 end
-
