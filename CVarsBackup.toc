@@ -1,8 +1,8 @@
-## Interface: 120001, 110207, 50503, 40402, 38001, 30405, 20505, 11508
+## Interface: 120105, 110207, 50504, 40402, 38002, 30405, 20506, 16001, 11509
 ## Title: CVarsBackup
 ## Notes: A small addon to backup and restore CVars settings.
 ## Author: Xruptor
-## Version: 2.17
+## Version: 2.18
 ## IconTexture: 4548890
 ## X-Curse-Project-ID: 465669
 ## X-WoWI-ID: 25942
